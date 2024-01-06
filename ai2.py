@@ -205,19 +205,19 @@ def evaluate_policy(policy, eval_episodes=10):
     print ("---------------------------------------")
     return avg_reward
 
-file_name = "%s_%s_%s" % ("TD3", env_name, str(seed))
-print ("---------------------------------------")
-print ("Settings: %s" % (file_name))
-print ("---------------------------------------")
+# file_name = "%s_%s_%s" % ("TD3", env_name, str(seed))
+# print ("---------------------------------------")
+# print ("Settings: %s" % (file_name))
+# print ("---------------------------------------")
 
-if not os.path.exists("./results"):
-      os.makedirs("./results")
-if save_models and not os.path.exists("./pytorch_models"):
-  os.makedirs("./pytorch_models")
+# if not os.path.exists("./results"):
+#       os.makedirs("./results")
+# if save_models and not os.path.exists("./pytorch_models"):
+#   os.makedirs("./pytorch_models")
 
-env.seed(seed)
-torch.manual_seed(seed)
-np.random.seed(seed)
-state_dim = env.observation_space.shape[0]
-action_dim = env.action_space.shape[0]
-max_action = float(env.action_space.high[0])
+# env.seed(seed)
+# torch.manual_seed(seed)
+# np.random.seed(seed)
+# state_dim = env.observation_space.shape[0]
+# action_dim = env.action_space.shape[0]
+# max_action = float(env.action_space.high[0])

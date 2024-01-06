@@ -38,8 +38,8 @@ from ai2 import TD3,ReplayBuffer,Actor,Critic,evaluate_policy
 # Adding this line if we don't want the right click to put a red point
 Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 Config.set('graphics', 'resizable', False)
-Config.set('graphics', 'width', '1429')
-Config.set('graphics', 'height', '660')
+Config.set('graphics', 'width', '1034')
+Config.set('graphics', 'height', '529')
 
 # Introducing last_x and last_y, used to keep the last point in memory when we draw the sand on the map
 last_x = 0
@@ -52,7 +52,7 @@ brain = TD3(5,3,1.9)
 action2rotation = [0,5,-5]
 last_reward = 0
 scores = []
-im = CoreImage("./images/MASK1.png")
+im = CoreImage(".\images\MASK1.png")
 
 env_name = "AntBulletEnv-v0" # Name of a environment (set it to any Continous environment you want)
 seed = 0 # Random seed number
@@ -104,10 +104,10 @@ def init():
     global goal_y
     global first_update
     sand = np.zeros((longueur,largeur))
-    img = PILImage.open("./images/mask.png").convert('L')
+    img = PILImage.open(".\images\mask.png").convert('L')
     sand = np.asarray(img)/255
-    goal_x = 1420
-    goal_y = 622
+    goal_x = 1025
+    goal_y = 487
     first_update = False
     global swap
     swap = 0
@@ -298,8 +298,8 @@ class Game(Widget):
 
         if distance < 25:
             if swap == 1:
-                goal_x = 1420
-                goal_y = 622
+                goal_x = 1025
+                goal_y = 487
                 swap = 0
             else:
                 goal_x = 9
@@ -323,7 +323,7 @@ class MyPaintWidget(Widget):
             length = 0
             sand[int(touch.x),int(touch.y)] = 1
             img = PILImage.fromarray(sand.astype("uint8")*255)
-            img.save("./images/sand.jpg")
+            img.save(".\images\sand.jpg")
 
     def on_touch_move(self, touch):
         global length, n_points, last_x, last_y
