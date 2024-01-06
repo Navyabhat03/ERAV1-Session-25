@@ -52,7 +52,7 @@ brain = TD3(5,3,1.9)
 action2rotation = [0,5,-5]
 last_reward = 0
 scores = []
-im = CoreImage(".\images\MASK1.png")
+im = CoreImage(r"C:\Users\gunak\OneDrive\Desktop\ERV1\ERAV1-Session-25-main\images\MASK1.png")
 
 env_name = "AntBulletEnv-v0" # Name of a environment (set it to any Continous environment you want)
 seed = 0 # Random seed number
@@ -104,7 +104,7 @@ def init():
     global goal_y
     global first_update
     sand = np.zeros((longueur,largeur))
-    img = PILImage.open(".\images\mask.png").convert('L')
+    img = PILImage.open(r"C:\Users\gunak\OneDrive\Desktop\ERV1\ERAV1-Session-25-main\images\mask.png").convert('L')
     sand = np.asarray(img)/255
     goal_x = 1025
     goal_y = 487
@@ -209,59 +209,46 @@ class Game(Widget):
         max_timesteps = 500000
         # We start the main loop over 500,000 timesteps
         while total_timesteps < max_timesteps:
-
-            # If the episode is done
+        
             if done:
-
-                # If we are not at the very beginning, we start the training process of the model
                 if total_timesteps != 0:
                     print("Total Timesteps: {} Episode Num: {} Reward: {}".format(total_timesteps, episode_num, episode_reward))
-                    policy.train(replay_buffer, episode_timesteps, batch_size, discount, tau, policy_noise, noise_clip, policy_freq)
+                    policy.train(replay_buffer, episode_timesteps, batch_size=100, discount=0.99, tau=0.005, policy_noise=0.2, noise_clip=0.5, policy_freq=2)
 
-                # We evaluate the episode and we save the policy
+                # Evaluate episode
                 if timesteps_since_eval >= eval_freq:
                     timesteps_since_eval %= eval_freq
-                    evaluations.append(evaluate_policy(policy))
-                    policy.save(file_name, directory="./pytorch_models")
-                    np.save("./results/%s" % (file_name), evaluations)
+                    evaluate_policy(policy)
 
-                # When the training step is done, we reset the state of the environment
+                # Reset environment
                 obs = env.reset()
-
-                # Set the Done to False
                 done = False
-
-                # Set rewards and episode timesteps to zero
                 episode_reward = 0
                 episode_timesteps = 0
                 episode_num += 1
 
-            # Before 10000 timesteps, we play random actions
+            # Select action randomly or according to policy
             if total_timesteps < start_timesteps:
                 action = env.action_space.sample()
-            else: # After 10000 timesteps, we switch to the model
+            else:
                 action = policy.select_action(np.array(obs))
-                # If the explore_noise parameter is not 0, we add noise to the action and we clip it
                 if expl_noise != 0:
                     action = (action + np.random.normal(0, expl_noise, size=env.action_space.shape[0])).clip(env.action_space.low, env.action_space.high)
 
-        # The agent performs the action in the environment, then reaches the next state and receives the reward
-        new_obs, reward, done, _ = env.step(action)
+            # Perform action
+            new_obs, reward, done, _ = env.step(action)
+            done_bool = float(done) if episode_timesteps < env._max_episode_steps else 0
 
-        # We check if the episode is done
-        done_bool = 0 if episode_timesteps + 1 == env._max_episode_steps else float(done)
+            # Store data in replay buffer
+            replay_buffer.add((obs, new_obs, action, reward, done_bool))
 
-        # We increase the total reward
-        episode_reward += reward
+            obs = new_obs
+            episode_reward += reward
 
-        # We store the new transition into the Experience Replay memory (ReplayBuffer)
-        replay_buffer.add((obs, new_obs, action, reward, done_bool))
+            episode_timesteps += 1
+            total_timesteps += 1
+            timesteps_since_eval += 1
 
-        # We update the state, the episode timestep, the total timesteps, and the timesteps since the evaluation of the policy
-        obs = new_obs
-        episode_timesteps += 1
-        total_timesteps += 1
-        timesteps_since_eval += 1
         rotation = action2rotation[action]
         self.car.move(rotation)
         distance = np.sqrt((self.car.x - goal_x)**2 + (self.car.y - goal_y)**2)
@@ -323,7 +310,7 @@ class MyPaintWidget(Widget):
             length = 0
             sand[int(touch.x),int(touch.y)] = 1
             img = PILImage.fromarray(sand.astype("uint8")*255)
-            img.save(".\images\sand.jpg")
+            img.save(r"C:\Users\gunak\OneDrive\Desktop\ERV1\ERAV1-Session-25-main\images\sand.jpg")
 
     def on_touch_move(self, touch):
         global length, n_points, last_x, last_y
