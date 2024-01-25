@@ -106,8 +106,8 @@ def init():
     sand = np.zeros((longueur,largeur))
     img = PILImage.open(".\images\mask.png").convert('L')
     sand = np.asarray(img)/255
-    goal_x = 1025
-    goal_y = 487
+    goal_x = 89
+    goal_y = 170
     first_update = False
     global swap
     swap = 0
@@ -162,7 +162,12 @@ class Ball2(Widget):
     pass
 class Ball3(Widget):
     pass
-
+class Goal1(Widget):
+    pass
+class Goal2(Widget):
+    pass
+class Goal3(Widget):
+    pass
 
 class Game(Widget):
     
@@ -255,6 +260,9 @@ class Game(Widget):
         self.ball1.pos = self.car.sensor1
         self.ball2.pos = self.car.sensor2
         self.ball3.pos = self.car.sensor3
+        self.goal1.pos = (89,170)
+        self.goal2.pos = (1105,217)
+        self.goal3.pos = (1200,92)
 
         if sand[int(self.car.x),int(self.car.y)] > 0:
             self.car.velocity = Vector(0.5, 0).rotate(self.car.angle)
@@ -285,12 +293,16 @@ class Game(Widget):
 
         if distance < 25:
             if swap == 1:
-                goal_x = 1025
-                goal_y = 487
+                print(self.goal3.pos)
+                goal_x, goal_y = self.goal3.pos
+                swap = 2
+            elif swap == 2:
+                print(self.goal1.pos)
+                goal_x, goal_y = self.goal1.pos
                 swap = 0
             else:
-                goal_x = 9
-                goal_y = 85
+                print(self.goal2.pos)
+                goal_x, goal_y = self.goal2.pos
                 swap = 1
         last_distance = distance
 
